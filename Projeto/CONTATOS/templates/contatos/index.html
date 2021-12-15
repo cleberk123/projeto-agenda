@@ -1,0 +1,76 @@
+{% extends 'base.html'%}
+
+{% block 'pesquisa' %}
+
+<br><br>
+<form method="get" action="{% url 'busca' %}">
+    <div class="form-group row">
+        <div class="col-12">
+            <input class="form-control" type="search" value="{{ request.GET.termo }}" id="search-input"
+                placeholder="Digite sua pesquisa" name="termo">
+            {% include 'parciais/_messages.html' %}
+        </div>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block 'conteudo' %}
+
+<h1 class="mt-5">Minha agenda</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nome</th>
+            <th>Sobrenome</th>
+            <th>Telefone</th>
+            <th>Categoria</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for contato in contatos %}
+        <!-- Aqui abrimos a tag for, para fazermos um fro em contatos.
+        Passamos a váriavel contatos lá da nossa view.
+        Aqui acessamos contato por contato e seus atributos respectivos.
+        -->
+
+        <!-- Não iremos usar essa condição aqui, iremos fazer pelo view mesmo
+            {% if contato.mostrar %}-->
+                <tr>
+                    <td>{{ contato.id }}</td>
+                    <td>
+                        <a href="{% url 'ver_contato' contato_id=contato.id %}">{{ contato.nome }}</a>
+                        <!-- chamamos a url ver_contato e passamos parâmetro para ela do nosso contato
+                        pegando o id dele-->
+                    </td>
+                    <td>{{ contato.sobrenome }}</td>
+                    <td>{{ contato.telefone }}</td>
+                    <td>{{ contato.categoria }}</td>
+                    <!-- Colocamos duas chaves e acessamos aos atributos das instacias de Contato -->
+                </tr>
+        <!--{% endif %}-->
+        {% endfor %}
+        <!-- Aqui fechamos a tag for -->
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% for pagina in contatos.paginator.page_range %}
+            {% if pagina == contatos.number %}    
+                <li class="page-item active">
+                    <a class="page-link" href="?p={{ pagina }}&termo={{ request.GET.termo }}">{{pagina}}</a>
+                    <!-- no href, como é link precisamos usar ? para passar a página sem dar erro -->
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?p={{ pagina }}&termo={{ request.GET.termo }}">{{pagina}}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</nav>
+
+{% endblock %}
